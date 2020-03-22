@@ -1,0 +1,44 @@
+version: '3'
+services:
+
+  quiz-postgres:
+    image: postgres
+    container_name: quiz-postgres
+    restart: unless-stopped
+    volumes:
+      - quiz-data:/var/lib/postgresql/data
+    ports:
+      - 7654:5432
+    environment:
+      - POSTGRES_DB:quiz-postgres
+      - POSTGRES_USER:postgres
+      - POSTGRES_PASSWORD:password
+
+  quiz-pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    depends_on:
+    - quiz-postgres
+    ports:
+    - 5050:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin
+      PGADMIN_DEFAULT_PASSWORD: password
+    volumes:
+    - quiz-pgadmin-storage:/var/lib/pgadmin/storage/quiz-postgres
+
+  # quiz-app:
+  #   build: ./quiz-app
+  #   container_name: quiz-app
+  #   environment:
+  #     - DB_SERVER=quiz-postgres
+  #   links:
+  #     - quiz-postgres
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+  quiz-data:
+  quiz-pgadmin-storage:
