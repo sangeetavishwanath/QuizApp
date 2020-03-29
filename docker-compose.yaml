@@ -1,8 +1,9 @@
 version: '3'
 services:
-
   quiz-postgres:
-    image: postgres
+    image: postgres:latest
+    networks:
+      - quiz-app
     container_name: quiz-postgres
     restart: unless-stopped
     volumes:
@@ -27,17 +28,23 @@ services:
     volumes:
     - quiz-pgadmin-storage:/var/lib/pgadmin/storage/quiz-postgres
 
-  # quiz-app:
-  #   build: ./quiz-app
-  #   container_name: quiz-app
-  #   environment:
-  #     - DB_SERVER=quiz-postgres
-  #   links:
-  #     - quiz-postgres
+  quiz-app:
+    build: ./quiz-app
+    container_name: quiz-app
+    networks:
+      - quiz-app
+    restart: unless-stopped
+    depends_on: 
+      - quiz-postgres
+    environment: 
+      - DB_HOST=quiz-postgres
+    expose: 
+      - 8080
+    ports:
+      - 8080:8080
 
 networks:
-  postgres:
-    driver: bridge
+  quiz-app:
 
 volumes:
   quiz-data:
