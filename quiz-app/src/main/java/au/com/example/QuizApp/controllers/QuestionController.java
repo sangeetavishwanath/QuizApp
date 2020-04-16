@@ -3,6 +3,7 @@ package au.com.example.QuizApp.controllers;
 import au.com.example.QuizApp.models.domain.Question;
 import au.com.example.QuizApp.repositories.QuestionRepository;
 import au.com.example.QuizApp.exceptions.ResourceNotFoundException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ public class QuestionController {
   private QuestionRepository questionRepository;
 
   @GetMapping("/questions")
+  @PreAuthorize("isAuthenticated()")
   public Page<Question> getQuestions(Pageable pageable) {
     return questionRepository.findAll(pageable);
   }
